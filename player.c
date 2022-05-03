@@ -238,7 +238,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
     for(int i=1;i<argc;i++){
-        printf("player:info:now play:%s",argv[i]);
+        printf("player:info:now play:%s\n",argv[i]);
         play(argv[i]);
     }
     return 0;

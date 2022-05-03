@@ -1,0 +1,11 @@
+LMFS PCM Player
+
+You should run the build_<your_platform>.sh to build the binary file
+Dependences: libpulse-dev libmagic-dev
+usage:
+    Import(don't start python under the source code directory):
+    >>> import player
+    >>> player.play(["example.wav", "example1.wav"])
+    >>> player.stopById(0)
+    >>> player.bgm("test.wav")
+    >>> player.stopById(0)

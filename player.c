@@ -116,7 +116,6 @@ AudioInfo GetInfo(char* file){
     }
     magic_t cookie=magic_open(MAGIC_CONTINUE);
     magic_load(cookie, NULL);
-    printf("%s\n", file);
     char text[1024];
     snprintf(text, 1024, "%s", magic_file(cookie, file));
     Array info=split(text, " ");

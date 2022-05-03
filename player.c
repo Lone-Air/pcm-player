@@ -147,10 +147,14 @@ int play(char* file) {
     int CHANNLES=Info.channles;
     if(CHANNLES==-1) return 0;
     if(RATE==-1) return 0;
+    return Play(file, RATE, CHANNLES);
+}
+
+int Play(char* file, int rate, int channles){
     const pa_sample_spec ss = {
         .format = PA_SAMPLE_S16LE,
-        .rate=RATE,
-        .channels = CHANNLES
+        .rate=rate,
+        .channels = channles
     };
  
     pa_simple *s = NULL;
@@ -233,6 +237,11 @@ finish:
 void bgm(char* file){
     while(1)
       play(file);
+}
+
+void Bgm(char* file, int rate, int channles){
+    while(1)
+      Play(file,rate,channles);
 }
 
 int main(int argc, char* argv[]){

@@ -4,7 +4,7 @@
 
 import ctypes, os, signal
 
-__version__="1.1.5"
+__version__="1.2"
 pidL=[]
 pidS={}
 ID=0
@@ -31,6 +31,19 @@ def play(files):
             except: exit()
         exit()
 
+def playWithOpt(files, rate, channles):
+    global pidL,pidS,ID
+    pid=os.fork()
+    pidL.append(pid)
+    pidS.update({ID: pid})
+    ID=ID+1
+    if(pid==0):
+        for i in files:
+            try:
+                dylib.Play(i.encode(), rate, channles)
+            except: exit()
+        exit()
+
 def bgm(file):
     global pidL,pidS,ID
     pid=os.fork()
@@ -40,6 +53,17 @@ def bgm(file):
     if(pid==0):
         try:
             dylib.bgm(file.encode())
+        except: exit()
+
+def bgmWithOpt(file, rate, channles):
+    global pidL,pidS,ID
+    pid=os.fork()
+    pidL.append(pid)
+    pidS.update({ID: pid})
+    ID=ID+1
+    if(pid==0):
+        try:
+            dylib.Bgm(file.encode(), rate, channles)
         except: exit()
 
 def stop():

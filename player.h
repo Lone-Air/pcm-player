@@ -32,10 +32,11 @@ int FullNum(char*);
 char* gettype(char*);
 Array split(char*, const char*);
 int charpToInt(char*);
-/*int GetRate(char*);
-int GetChannles(char*);*/
 AudioInfo GetInfo(char*);
 int play(char*);
+int Play(char*, int, int);
+void bgm(char*);
+void Bgm(char*, int, int);
 
 #define BUFSIZE 1024
 

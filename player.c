@@ -237,8 +237,10 @@ int main(int argc, char* argv[]){
         fprintf(stderr, "player:failed:no file input\n");
         return 0;
     }
-    for(int i=1;i<argc;i++)
-      play(argv[i]);
+    for(int i=1;i<argc;i++){
+        printf("player:info:now play:%s",argv[i]);
+        play(argv[i]);
+    }
     return 0;
 }
 

@@ -179,7 +179,8 @@ int play(char* file) {
         fprintf(stderr, __FILE__": pa_simple_new() failed: %s\n", pa_strerror(error));
         goto finish;
     }
- 
+
+    int count=0;
     for (;;) {
         uint8_t buf[BUFSIZE];
         ssize_t r;
@@ -204,6 +205,8 @@ int play(char* file) {
             goto finish;
         }
  
+        count++;
+        if(count<=1) continue;
         /* ... and play it */
         if (pa_simple_write(s, buf, (size_t) r, &error) < 0) {
             fprintf(stderr, __FILE__": pa_simple_write() failed: %s\n", pa_strerror(error));

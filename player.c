@@ -108,11 +108,11 @@ int charpToInt(char* str){
     return res;
 }
 
-int GetRate(char* file){
+AudioInfo GetInfo(char* file){
     char* type=gettype(file);
     if(strcmp("audio/x-wav", type)!=0){
         fprintf(stderr, "player:error:not pcm file\n");
-        return -1;
+        return (AudioInfo){-1,-1};
     }
     struct magic_set *cookie=NULL;
     cookie=magic_open(MAGIC_CONTINUE);
@@ -122,35 +122,12 @@ int GetRate(char* file){
     strcpy(text, text_D);
     Array info=split(text, " ");
     int rate=-1;
+    char* Channle;
+    int channles=-1;
     for(int i=0;i<info.len;i++){
         int inter=info.len-i-1;
         if(FullNum(info.data[inter])){
             rate=charpToInt(info.data[inter]);
-            break;
-        }
-    }
-    magic_close(cookie);
-    return rate;
-}
-
-int GetChannles(char* file){
-    char* type=gettype(file);
-    if(strcmp("audio/x-wav", type)!=0){
-        fprintf(stderr, "player:error:not pcm file\n");
-        return -1;
-    }
-    struct magic_set *cookie=NULL;
-    cookie=magic_open(MAGIC_CONTINUE);
-    magic_load(cookie, NULL);
-    const char* text_D=magic_file(cookie,file);
-    char* text=(char*)malloc(sizeof(char)*strlen(text_D));
-    strcpy(text, text_D);
-    Array info=split(text, " ");
-    int channles=-1;
-    char* Channle={0};
-    for(int i=0;i<info.len;i++){
-        int inter=info.len-i-1;
-        if(FullNum(info.data[inter])){
             Channle=info.data[inter-1];
             if(strcmp(Channle, "stereo")==0) channles=2;
             else if(strcmp(Channle, "mono")==0) channles=1;
@@ -159,14 +136,17 @@ int GetChannles(char* file){
         }
     }
     magic_close(cookie);
-    return channles;
+    AudioInfo res={rate, channles};
+    return res;
 }
+
 int play(char* file) {
  
     /* The Sample format to use */
     file=islink(file)?readlnk(file):file;
-    int RATE=GetRate(file);
-    int CHANNLES=GetChannles(file);
+    AudioInfo Info=GetInfo(file);
+    int RATE=Info.rate;
+    int CHANNLES=Info.channles;
     if(CHANNLES==-1) return 0;
     if(RATE==-1) return 0;
     const pa_sample_spec ss = {

@@ -16,6 +16,11 @@
 #include <sys/stat.h>
 
 typedef struct{
+    int rate;
+    int channles;
+}AudioInfo;
+
+typedef struct{
     char** data;
     int len;
 }Array;
@@ -27,8 +32,9 @@ int FullNum(char*);
 char* gettype(char*);
 Array split(char*, const char*);
 int charpToInt(char*);
-int GetRate(char*);
-int GetChannles(char*);
+/*int GetRate(char*);
+int GetChannles(char*);*/
+AudioInfo GetInfo(char*);
 int play(char*);
 
 #define BUFSIZE 1024

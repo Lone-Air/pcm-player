@@ -4,7 +4,7 @@
 
 import ctypes, os, signal
 
-__version__="1.1.3"
+__version__="1.1.4"
 pidL=[]
 pidS={}
 ID=0

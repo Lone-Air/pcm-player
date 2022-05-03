@@ -114,12 +114,11 @@ AudioInfo GetInfo(char* file){
         fprintf(stderr, "player:error:not pcm file\n");
         return (AudioInfo){-1,-1};
     }
-    struct magic_set *cookie=NULL;
-    cookie=magic_open(MAGIC_CONTINUE);
+    magic_t cookie=magic_open(MAGIC_CONTINUE);
     magic_load(cookie, NULL);
-    const char* text_D=magic_file(cookie,file);
-    char* text=(char*)malloc(sizeof(char)*strlen(text_D));
-    strcpy(text, text_D);
+    printf("%s\n", file);
+    char text[1024];
+    snprintf(text, 1024, "%s", magic_file(cookie, file));
     Array info=split(text, " ");
     int rate=-1;
     char* Channle;

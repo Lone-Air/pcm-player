@@ -4,7 +4,7 @@
 
 import ctypes, os, signal
 
-__version__="1.2"
+__version__="1.3"
 pidL=[]
 pidS={}
 ID=0
@@ -18,11 +18,12 @@ elif(os.name=="nt"):
 else:
     raise OSError("Your device is not recognized")
 
-def play(files):
+def play(files, wait=False):
     global pidL,pidS,ID
     pid=os.fork()
     pidL.append(pid)
     pidS.update({ID: pid})
+    myid=ID
     ID=ID+1
     if(pid==0):
         for i in files:
@@ -30,41 +31,82 @@ def play(files):
                 dylib.play(i.encode())
             except: exit()
         exit()
+    elif(pid>0 and wait):
+        while 1:
+            wpid, status=os.waitpid(pid,0)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                delpid(myid)
+                break
 
-def playWithOpt(files, rate, channles):
+def playWithOpt(files, rate, channles, bit, wait=False):
     global pidL,pidS,ID
     pid=os.fork()
     pidL.append(pid)
     pidS.update({ID: pid})
+    myid=ID
     ID=ID+1
     if(pid==0):
         for i in files:
             try:
-                dylib.Play(i.encode(), rate, channles)
+                dylib.Play(i.encode(), rate, channles, bit)
             except: exit()
         exit()
+    elif(pid>0 and wait):
+        while 1:
+            wpid, status=os.waitpid(pid,0)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                delpid(myid)
+                break
 
-def bgm(file):
+
+def bgm(file, wait=False):
     global pidL,pidS,ID
     pid=os.fork()
     pidL.append(pid)
     pidS.update({ID: pid})
+    myid=ID
     ID=ID+1
     if(pid==0):
         try:
             dylib.bgm(file.encode())
         except: exit()
+        exit()
+    elif(pid>0 and wait):
+        while 1:
+            wpid, status=os.waitpid(pid,0)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                delpid(myid)
+                break
 
-def bgmWithOpt(file, rate, channles):
+
+def bgmWithOpt(file, rate, channles, bit, wait=False):
     global pidL,pidS,ID
     pid=os.fork()
     pidL.append(pid)
     pidS.update({ID: pid})
+    myid=ID
     ID=ID+1
     if(pid==0):
         try:
-            dylib.Bgm(file.encode(), rate, channles)
+            dylib.Bgm(file.encode(), rate, channles, bit)
         except: exit()
+        exit()
+    elif(pid>0 and wait):
+        while 1:
+            wpid, status=os.waitpid(pid,0)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                delpid(myid)
+                break
+
+def initFile(file):
+    dylib.initGet(file.encode())
+
+getrate=lambda:dylib.getrate()
+getchannles=lambda:dylib.getchannles()
+getbit=lambda:dylib.getbit()
+
+def eraseCache():
+    dylib.eraseTMP()
 
 def stop():
     global pidL,pidS,ID

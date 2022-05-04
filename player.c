@@ -122,19 +122,42 @@ AudioInfo GetInfo(char* file){
     int rate=-1;
     char* Channle;
     int channles=-1;
+    int findnum=0;
+    int bit=-1;
     for(int i=0;i<info.len;i++){
         int inter=info.len-i-1;
         if(FullNum(info.data[inter])){
-            rate=charpToInt(info.data[inter]);
-            Channle=info.data[inter-1];
-            if(strcmp(Channle, "stereo")==0) channles=2;
-            else if(strcmp(Channle, "mono")==0) channles=1;
-            else fprintf(stderr,"player:error:Unable to get the number of channels to determine the audio file\n");
-            break;
+            if(findnum==0){
+                rate=charpToInt(info.data[inter]);
+                Channle=info.data[inter-1];
+                if(strcmp(Channle, "stereo")==0) channles=2;
+                else if(strcmp(Channle, "mono")==0) channles=1;
+                else fprintf(stderr,"player:error:Unable to get the number of channels to determine the audio file\n");
+                findnum++;
+            }
+            else{
+                bit=charpToInt(info.data[inter]);
+            }
         }
     }
     magic_close(cookie);
-    AudioInfo res={rate, channles};
+    int BIT;
+    switch(bit){
+      case 16:
+        BIT=PA_SAMPLE_S16LE;
+        break;
+      case 24:
+        BIT=PA_SAMPLE_S24LE;
+        break;
+      case 32:
+        BIT=PA_SAMPLE_S32LE;
+        break;
+      default:
+        fprintf(stderr, "player:failed: <%d bit> is unrecognized\n", bit);
+        BIT=-1;
+        break;
+    }
+    AudioInfo res={rate, channles, BIT};
     return res;
 }
 
@@ -145,14 +168,16 @@ int play(char* file) {
     AudioInfo Info=GetInfo(file);
     int RATE=Info.rate;
     int CHANNLES=Info.channles;
+    int BIT=Info.bit;
     if(CHANNLES==-1) return 0;
     if(RATE==-1) return 0;
-    return Play(file, RATE, CHANNLES);
+    if(BIT==-1) return 0;
+    return Play(file, RATE, CHANNLES, BIT);
 }
 
-int Play(char* file, int rate, int channles){
+int Play(char* file, int rate, int channles, int bit){
     const pa_sample_spec ss = {
-        .format = PA_SAMPLE_S16LE,
+        .format = bit,
         .rate=rate,
         .channels = channles
     };
@@ -239,9 +264,43 @@ void bgm(char* file){
       play(file);
 }
 
-void Bgm(char* file, int rate, int channles){
+void Bgm(char* file, int rate, int channles, int bit){
     while(1)
-      Play(file,rate,channles);
+      Play(file,rate,channles, bit);
+}
+
+void initGet(char* file){
+    AudioTEMP=GetInfo(file);
+    Temped=1;
+}
+
+int getrate(){
+    if(!Temped){
+        fprintf(stderr, "player:error:not file selected\n");
+        return -1;
+    }
+    return AudioTEMP.rate;
+}
+
+int getchannles(){
+    if(!Temped){
+        fprintf(stderr, "player:error:not file selected\n");
+        return -1;
+    }
+    return AudioTEMP.channles;
+}
+
+int getbit(){
+    if(!Temped){
+        fprintf(stderr, "player:error:not file selected\n");
+        return -1;
+    }
+    return AudioTEMP.bit;
+}
+
+void eraseTMP(){
+    AudioTEMP=(AudioInfo){0,0,0};
+    Temped=0;
 }
 
 int main(int argc, char* argv[]){

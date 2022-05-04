@@ -4,7 +4,7 @@
 
 import ctypes, os, signal
 
-__version__="1.3"
+__version__="1.4"
 pidL=[]
 pidS={}
 ID=0
@@ -30,6 +30,48 @@ def play(files, wait=False):
             try:
                 dylib.play(i.encode())
             except: exit()
+        exit()
+    elif(pid>0 and wait):
+        while 1:
+            wpid, status=os.waitpid(pid,0)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                delpid(myid)
+                break
+
+def bgmList(files, wait=False):
+    global pidL,pidS,ID
+    pid=os.fork()
+    pidL.append(pid)
+    pidS.update({ID: pid})
+    myid=ID
+    ID=ID+1
+    if(pid==0):
+        while 1:
+            for i in files:
+                try:
+                    dylib.play(i.encode())
+                except: exit()
+        exit()
+    elif(pid>0 and wait):
+        while 1:
+            wpid, status=os.waitpid(pid,0)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                delpid(myid)
+                break
+
+def bgmListWithOpt(files, rate, channles, bit, wait=False):
+    global pidL,pidS,ID
+    pid=os.fork()
+    pidL.append(pid)
+    pidS.update({ID: pid})
+    myid=ID
+    ID=ID+1
+    if(pid==0):
+        while 1:
+            for i in files:
+                try:
+                    dylib.Play(i.encode(), rate, channles, bit)
+                except: exit()
         exit()
     elif(pid>0 and wait):
         while 1:

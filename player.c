@@ -137,6 +137,7 @@ AudioInfo GetInfo(char* file){
             }
             else{
                 bit=charpToInt(info.data[inter]);
+                break;
             }
         }
     }

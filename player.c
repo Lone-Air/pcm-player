@@ -63,9 +63,10 @@ char* gettype(char* file){
     struct magic_set *cookie=NULL;
     cookie=magic_open(MAGIC_MIME_TYPE);
     magic_load(cookie, NULL);
-    const char* text_D=magic_file(cookie,file);
-    char* buf=(char*)malloc(sizeof(char)*strlen(text_D));
-    strcpy(buf, text_D);
+    char text[1024];
+    snprintf(text, 1024, "%s", magic_file(cookie, file));
+    char* buf=(char*)malloc(strlen(text)+1);
+    strcpy(buf, text);
     magic_close(cookie);
     return buf;
 }
@@ -111,9 +112,11 @@ int charpToInt(char* str){
 AudioInfo GetInfo(char* file){
     char* type=gettype(file);
     if(strcmp("audio/x-wav", type)!=0){
+        free(type);
         fprintf(stderr, "player:error:not pcm file\n");
         return (AudioInfo){-1,-1};
     }
+    free(type);
     magic_t cookie=magic_open(MAGIC_CONTINUE);
     magic_load(cookie, NULL);
     char text[1024];
@@ -141,6 +144,7 @@ AudioInfo GetInfo(char* file){
             }
         }
     }
+    free(info.data);
     magic_close(cookie);
     int BIT;
     switch(bit){

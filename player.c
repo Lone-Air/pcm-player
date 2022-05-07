@@ -114,7 +114,7 @@ AudioInfo GetInfo(char* file){
     if(strcmp("audio/x-wav", type)!=0){
         free(type);
         fprintf(stderr, "player:error:not pcm file\n");
-        return (AudioInfo){-1,-1};
+        return (AudioInfo){-1,-1,-1};
     }
     free(type);
     magic_t cookie=magic_open(MAGIC_CONTINUE);

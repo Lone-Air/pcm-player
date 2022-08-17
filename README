@@ -1,8 +1,9 @@
-LMFS PCM Player
+LMFS PCM Player based on PulseAudio demo program
 
 You should run the build_<your_platform>.sh to build the binary file
 Dependences: libpulse-dev libmagic-dev
 usage:
+    Rename the root to source code directory to "player"
     Import(don't start python under the source code directory):
     >>> import player
     >>> player.play(["example.wav", "example1.wav"])

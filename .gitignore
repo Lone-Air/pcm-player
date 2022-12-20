@@ -1,2 +1,5 @@
 lib*
 __pycache__/
+*.so
+*.dll
+*.dylib

@@ -308,6 +308,7 @@ void eraseTMP(){
     Temped=0;
 }
 
+#ifdef EXEC_MODE
 int main(int argc, char* argv[]){
     if(argc<2){
         fprintf(stderr, "player:failed:no file input\n");
@@ -319,7 +320,7 @@ int main(int argc, char* argv[]){
     }
     return 0;
 }
-
+#endif
 
 #ifdef __cplusplus
 };
